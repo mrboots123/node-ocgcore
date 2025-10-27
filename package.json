@@ -1,6 +1,6 @@
 {
   "name": "node-ocgcore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node.js FFI bindings for OCGCore (Yu-Gi-Oh! card game engine)",
   "type": "module",
   "main": "./dist/index.js",
