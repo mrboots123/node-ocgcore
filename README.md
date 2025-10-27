@@ -5,22 +5,26 @@ Node.js FFI bindings for OCGCore - the Yu-Gi-Oh! Official Card Game core engine.
 ## Installation
 
 ```bash
-npm install ocgcore
+npm install node-ocgcore
 ```
 
 ## Prerequisites
 
-You need the OCGCore shared library (`libocgcore.so` on Linux, `libocgcore.dylib` on macOS) compiled for your platform. The library should also have `liblua.so` available in the same directory or system library path.
+You need the OCGCore shared library (`libocgcore.so` on Linux, `libocgcore.dylib` on macOS) compiled for your platform. The library also depends on Lua (`liblua.so`, `liblua.dylib`, or `liblua.dll`).
 
 ## Usage
 
 ### Basic Usage
 
 ```typescript
-import { ocgCore } from 'ocgcore';
+import { ocgCore } from 'node-ocgcore';
 
 // Initialize OCGCore with the library path
+// If Lua is in your system library path:
 const core = ocgCore('/path/to/libocgcore.so');
+
+// If Lua is not in system path, provide it as second parameter:
+const core = ocgCore('/path/to/libocgcore.so', '/path/to/liblua.so');
 
 // Create a duel with a random seed
 const duel = core.create_duel(12345);
@@ -36,9 +40,9 @@ core.start_duel(duel, 0);
 ### Using Advanced Seed Array
 
 ```typescript
-import { ocgCore, createSeedArray } from 'ocgcore';
+import { ocgCore, createSeedArray } from 'node-ocgcore';
 
-const core = ocgCore('/path/to/libocgcore.so');
+const core = ocgCore('/path/to/libocgcore.so', '/path/to/liblua.so');
 
 // Create duel with multiple seed values for better randomness
 const seedArray = createSeedArray([12345, 67890, 11111]);
@@ -48,7 +52,7 @@ const duel = core.create_duel_v2(seedArray);
 ### Using CardData Structure
 
 ```typescript
-import { CardData } from 'ocgcore';
+import { CardData } from 'node-ocgcore';
 
 const card = new CardData({
   code: 12345,
@@ -69,10 +73,10 @@ const card = new CardData({
 ### Event-Driven Usage
 
 ```typescript
-import { OCGCoreEmitter } from 'ocgcore';
+import { OCGCoreEmitter } from 'node-ocgcore';
 
 // Create an event-enabled OCGCore instance
-const emitter = new OCGCoreEmitter('/path/to/libocgcore.so');
+const emitter = new OCGCoreEmitter('/path/to/libocgcore.so', '/path/to/liblua.so');
 
 // Listen to all method calls
 emitter.onBeforeCall((event) => {
@@ -97,11 +101,12 @@ const duel = core.create_duel(12345);
 
 ## API
 
-### `ocgCore(libraryPath: string): OCGCore`
+### `ocgCore(libraryPath: string, luaLibPath?: string): OCGCore`
 
 Initialize the OCGCore library.
 
 - **libraryPath**: Path to the libocgcore shared library
+- **luaLibPath** (optional): Path to the Lua shared library (required if Lua is not in system path)
 - **Returns**: OCGCore instance with all available functions
 - **Throws**: Error if library path doesn't exist or is not accessible
 

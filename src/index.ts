@@ -4,10 +4,11 @@ import fs from 'fs';
 /**
  * Initialize the OCGCore library with koffi (alternative to ffi-napi)
  * @param libraryPath - Path to the libocgcore.so or libocgcore.dylib file
+ * @param luaLibPath - Optional path to the liblua.so or liblua.dylib file (required if Lua is not in system path)
  * @returns OCGCore instance with all available functions
  * @throws {Error} If the library path doesn't exist or is not accessible
  */
-export function ocgCore(libraryPath: string) {
+export function ocgCore(libraryPath: string, luaLibPath?: string) {
   if (!libraryPath) {
     throw new Error('Library path is required');
   }
@@ -25,6 +26,18 @@ export function ocgCore(libraryPath: string) {
     fs.accessSync(libraryPath, fs.constants.R_OK);
   } catch (error) {
     throw new Error(`Library file is not readable: ${libraryPath}`);
+  }
+
+  // Preload Lua library if provided
+  if (luaLibPath) {
+    if (!fs.existsSync(luaLibPath)) {
+      throw new Error(`Lua library not found at path: ${luaLibPath}`);
+    }
+    try {
+      koffi.load(luaLibPath);
+    } catch (error) {
+      throw new Error(`Failed to load Lua library: ${error}`);
+    }
   }
 
   // Load the library

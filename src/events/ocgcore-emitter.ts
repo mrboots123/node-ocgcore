@@ -18,9 +18,9 @@ export interface OCGCoreEventWithResult extends OCGCoreEvent {
 export class OCGCoreEmitter extends EventEmitter {
   private core: OCGCore;
 
-  constructor(libraryPath: string) {
+  constructor(libraryPath: string, luaLibPath?: string) {
     super();
-    this.core = ocgCore(libraryPath);
+    this.core = ocgCore(libraryPath, luaLibPath);
   }
 
   /**
